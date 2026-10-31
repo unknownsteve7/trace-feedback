@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+sqlalchemy
+asyncpg
+pydantic[email]
+email-validator
+python-multipart
+python-jose[cryptography]
+passlib[bcrypt]
+requests
+pillow
+pydantic-settings==2.3.4
