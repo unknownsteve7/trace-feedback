@@ -37,8 +37,7 @@ class FeedbackAdminOut(BaseModel):
     device_hash: str
     is_synthetic: bool
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 class HealthResponse(BaseModel):
     status: str

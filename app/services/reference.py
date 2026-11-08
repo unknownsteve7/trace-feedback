@@ -8,6 +8,7 @@ class ReferenceService:
         self.categories: list[str] = []
         self.valid_routes: set[str] = set()
         self.valid_vehicles: set[str] = set()
+        self.load()
 
     def load(self):
         # 1. Load categories
