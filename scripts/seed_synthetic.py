@@ -12,7 +12,12 @@ import sys
 import uuid
 import random
 import asyncio
+from pathlib import Path
 from datetime import datetime, timedelta, timezone
+
+# Add root folder to sys.path
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
 
 from app.database import AsyncSessionLocal, init_db
 from app.models import Feedback
