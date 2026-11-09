@@ -11,10 +11,18 @@ from app.routers import feedback, meta, admin
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # 1. Initialize reference data into memory
-    reference_service.load()
-    # 2. Initialize database schema
-    await init_db()
+    # 1. Initialize reference data into memory (safe fallback)
+    try:
+        reference_service.load()
+    except Exception as e:
+        print(f"Warning: reference load: {e}")
+
+    # 2. Database schema initialization (safe on serverless)
+    try:
+        await init_db()
+    except Exception as e:
+        print(f"Warning: init_db on startup: {e}")
+
     yield
 
 app = FastAPI(
