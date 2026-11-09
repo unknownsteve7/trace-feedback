@@ -1,2 +1,28 @@
+# Virtual environment
 virtual/
-.env    
+venv/
+.venv/
+
+# Environment secrets
+.env
+.env.local
+
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Database
+feedback.db
+*.sqlite3
+
+# Testing & Linting
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Vercel & IDE
+.vercel/
+.vscode/
+.idea/
