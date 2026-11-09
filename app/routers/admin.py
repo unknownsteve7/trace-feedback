@@ -36,7 +36,7 @@ def export_feedback_data(
     API-Key protected.
     """
     try:
-        query = db.query(Feedback).order_by(Feedback.received_at_utc.asc()).limit(limit)
+        query = db.query(Feedback)
 
         if since:
             clean_since = since.replace("Z", "+00:00")
@@ -45,6 +45,9 @@ def export_feedback_data(
 
         if not include_synthetic:
             query = query.filter(Feedback.is_synthetic.is_(False))
+
+        # Order and limit applied AFTER all filters
+        query = query.order_by(Feedback.received_at_utc.asc()).limit(limit)
 
         records = query.all()
         return records
