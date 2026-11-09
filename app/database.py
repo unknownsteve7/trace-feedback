@@ -1,3 +1,6 @@
+import os
+import ssl
+from pathlib import Path
 from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import declarative_base
@@ -5,12 +8,13 @@ from sqlalchemy.pool import NullPool
 
 from app.config import settings
 
-import ssl
-
 # Database URL & connection arguments
 db_url = settings.DATABASE_URL
 if db_url.startswith("postgresql://"):
     db_url = db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+elif db_url.startswith("sqlite") and os.path.isdir("/tmp"):
+    # Safe writable path for serverless AWS Lambda / Vercel
+    db_url = "sqlite+aiosqlite:////tmp/feedback.db"
 
 connect_args = {}
 pool_kwargs = {"future": True, "echo": settings.DEBUG}
