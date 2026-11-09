@@ -1,17 +1,35 @@
 from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import declarative_base
+from sqlalchemy.pool import NullPool
 
 from app.config import settings
 
-# If running SQLite, ensure check_same_thread=False
-connect_args = {"check_same_thread": False} if settings.DATABASE_URL.startswith("sqlite") else {}
+import ssl
+
+# Database URL & connection arguments
+db_url = settings.DATABASE_URL
+if db_url.startswith("postgresql://"):
+    db_url = db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+
+connect_args = {}
+pool_kwargs = {"future": True, "echo": settings.DEBUG}
+
+if db_url.startswith("sqlite"):
+    connect_args = {"check_same_thread": False}
+elif "supabase" in db_url or "pooler" in db_url or "sslmode=require" in db_url:
+    # Supabase uses custom SSL certificate chain on port 5432 / 6543
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    connect_args = {"ssl": ctx}
+    # PgBouncer handles connection pooling on Supabase side; use NullPool locally
+    pool_kwargs["poolclass"] = NullPool
 
 engine = create_async_engine(
-    settings.DATABASE_URL,
-    echo=settings.DEBUG,
+    db_url,
     connect_args=connect_args,
-    future=True
+    **pool_kwargs
 )
 
 AsyncSessionLocal = async_sessionmaker(

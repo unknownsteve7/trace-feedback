@@ -1,4 +1,2 @@
 virtual/
 .env    
-app/__pycache_
-app/services/__pycache__

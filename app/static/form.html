@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TRACE • Delhi Bus Passenger Feedback</title>
+    <title>TRACE | Delhi Bus Passenger Feedback</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background: #f0f2f5; color: #1c1e21; display: flex; justify-content: center; padding: 12px; }
@@ -19,7 +19,7 @@
         select, textarea, input[type="text"] { width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 8px; font-size: 15px; }
         select:focus, textarea:focus { outline: none; border-color: #1a237e; }
         .rating-stars { display: flex; gap: 12px; margin: 8px 0; }
-        .star-btn { font-size: 28px; color: #ccc; cursor: pointer; user-select: none; transition: 0.2s; }
+        .star-btn { font-size: 32px; color: #ccc; cursor: pointer; user-select: none; transition: 0.2s; }
         .star-btn.active { color: #fbc02d; }
         .char-count { font-size: 11px; color: #777; text-align: right; margin-top: 4px; }
         button[type="submit"] { width: 100%; background: #1a237e; color: #fff; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 10px; }
@@ -36,13 +36,13 @@
 <body>
     <div class="card">
         <div class="header">
-            <h1>TRACE • Delhi Bus Feedback</h1>
+            <h1>TRACE &bull; Delhi Bus Feedback</h1>
             <p>Passenger Reliability & Experience Reporting</p>
         </div>
 
         <div class="context-pill">
-            <div>🚌 Route: <span id="route-display">—</span></div>
-            <div>🔢 Vehicle: <span id="vehicle-display">—</span></div>
+            <div>Route: <span id="route-display">--</span></div>
+            <div>Bus: <span id="vehicle-display">--</span></div>
         </div>
 
         <form id="feedback-form">
@@ -77,11 +77,11 @@
             <div class="form-group">
                 <label>Overall Trip Rating</label>
                 <div class="rating-stars" id="star-container">
-                    <span class="star-btn" data-val="1">★</span>
-                    <span class="star-btn" data-val="2">★</span>
-                    <span class="star-btn" data-val="3">★</span>
-                    <span class="star-btn" data-val="4">★</span>
-                    <span class="star-btn" data-val="5">★</span>
+                    <span class="star-btn" data-val="1">&#9733;</span>
+                    <span class="star-btn" data-val="2">&#9733;</span>
+                    <span class="star-btn" data-val="3">&#9733;</span>
+                    <span class="star-btn" data-val="4">&#9733;</span>
+                    <span class="star-btn" data-val="5">&#9733;</span>
                 </div>
                 <input type="hidden" id="rating-val" value="3">
             </div>
@@ -97,9 +97,9 @@
         </form>
 
         <div class="success-box" id="success-screen">
-            <h2>✓ Grievance Logged</h2>
+            <h2>&#10003; Grievance Logged</h2>
             <p>Your report has been recorded with embedded vehicle telemetry context.</p>
-            <div class="id-badge" id="ticket-id">ID: —</div>
+            <div class="id-badge" id="ticket-id">ID: --</div>
             <p style="font-size: 12px; color: #888;">This feedback links directly to TRACE delay analytics.</p>
         </div>
     </div>

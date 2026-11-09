@@ -82,7 +82,7 @@ async def seed(n: int = 100):
 
         session.add_all(entries)
         await session.commit()
-        print(f"Successfully seeded {len(entries)} synthetic records into database ✓")
+        print(f"Successfully seeded {len(entries)} synthetic records into database [OK]")
 
 if __name__ == "__main__":
     count = int(sys.argv[1]) if len(sys.argv) > 1 else 100

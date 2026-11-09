@@ -50,7 +50,7 @@ def make_qr_sticker(route_id: str, route_name: str, vehicle_id: str):
 
     # Header
     draw.rectangle([(0, 0), (card_w, 45)], fill="#1a237e")
-    draw.text((15, 13), "TRACE • Delhi Bus Feedback", fill="white")
+    draw.text((15, 13), "TRACE - Delhi Bus Feedback", fill="white")
 
     # QR
     card.paste(qr_img, (30, 58))
