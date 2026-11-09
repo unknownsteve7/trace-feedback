@@ -82,9 +82,10 @@ app.include_router(admin.router)
 app.include_router(admin.router, prefix="/api")
 
 
+@app.get("/api/index.py")
 @app.get("/")
 @app.get("/api")
-def root(request: Request, debug: bool = False):
+def root(request: Request, debug: bool = True):
     if debug:
         return {
             "scope_path": request.scope.get("path"),
