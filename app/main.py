@@ -41,12 +41,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Register routers
+# Register routers (both at root and with /api prefix for Vercel compatibility)
 app.include_router(feedback.router)
 app.include_router(meta.router)
 app.include_router(admin.router)
 
+app.include_router(feedback.router, prefix="/api")
+app.include_router(meta.router, prefix="/api")
+app.include_router(admin.router, prefix="/api")
+
 @app.get("/")
+@app.get("/api")
+@app.get("/api/index")
+@app.get("/api/index.py")
 async def root():
     # Redirect root to feedback form demo
     return RedirectResponse(url="/feedback?r=784&v=DL1PC9421")
