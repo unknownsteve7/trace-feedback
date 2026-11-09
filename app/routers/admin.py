@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
 from sqlalchemy import select, func
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.database import get_db
@@ -11,7 +11,8 @@ from app.schemas import FeedbackAdminOut
 
 router = APIRouter(prefix="/admin", tags=["Admin Export Pipeline"])
 
-async def verify_admin_key(x_api_key: str = Header(...)):
+
+def verify_admin_key(x_api_key: str = Header(...)):
     if x_api_key != settings.ADMIN_API_KEY:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -19,39 +20,37 @@ async def verify_admin_key(x_api_key: str = Header(...)):
         )
     return x_api_key
 
+
 @router.get("/export", response_model=list[FeedbackAdminOut])
-async def export_feedback_data(
+def export_feedback_data(
     since: Optional[datetime] = Query(None, description="Export feedback received after this UTC timestamp"),
     include_synthetic: bool = Query(True, description="Include synthetic test rows"),
     limit: int = Query(2000, le=10000, description="Batch limit for ETL extract"),
-    db: AsyncSession = Depends(get_db),
+    db: Session = Depends(get_db),
     _: str = Depends(verify_admin_key)
 ):
     """
     Export endpoint designed for scheduled Bronze/Silver ingestion pull.
     API-Key protected.
     """
-    stmt = select(Feedback).order_by(Feedback.received_at_utc.asc()).limit(limit)
+    query = db.query(Feedback).order_by(Feedback.received_at_utc.asc()).limit(limit)
 
     if since:
-        stmt = stmt.where(Feedback.received_at_utc > since)
+        query = query.filter(Feedback.received_at_utc > since)
     if not include_synthetic:
-        stmt = stmt.where(Feedback.is_synthetic == False)
+        query = query.filter(Feedback.is_synthetic == False)
 
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    return query.all()
+
 
 @router.get("/stats")
-async def get_feedback_stats(
-    db: AsyncSession = Depends(get_db),
+def get_feedback_stats(
+    db: Session = Depends(get_db),
     _: str = Depends(verify_admin_key)
 ):
     """Returns high-level summary counts for monitoring."""
-    total_q = await db.execute(select(func.count(Feedback.feedback_id)))
-    synth_q = await db.execute(select(func.count(Feedback.feedback_id)).where(Feedback.is_synthetic == True))
-    
-    total = total_q.scalar() or 0
-    synthetic = synth_q.scalar() or 0
+    total = db.query(func.count(Feedback.feedback_id)).scalar() or 0
+    synthetic = db.query(func.count(Feedback.feedback_id)).filter(Feedback.is_synthetic == True).scalar() or 0
 
     return {
         "total_records": total,

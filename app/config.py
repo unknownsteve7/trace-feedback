@@ -12,7 +12,7 @@ class Settings(BaseSettings):
 
     # Database: Supports SQLite (async) or PostgreSQL
     # Example: postgresql+asyncpg://postgres:trace_pass@localhost:5432/trace_db
-    DATABASE_URL: str = "sqlite+aiosqlite:///./feedback.db"
+    DATABASE_URL: str = "sqlite:///./feedback.db"
 
     # Security & Anti-Spam
     DEVICE_HASH_SALT: str = "trace_delhi_transit_salt_2026_xyz"

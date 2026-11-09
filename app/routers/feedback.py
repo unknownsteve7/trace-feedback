@@ -3,7 +3,7 @@ from pathlib import Path
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import HTMLResponse
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models import Feedback
@@ -55,7 +55,7 @@ EMBEDDED_FORM_HTML = """<!DOCTYPE html>
     <div class="card">
         <div class="header">
             <h1>TRACE &bull; Delhi Bus Feedback</h1>
-            <p>Passenger Reliability & Experience Reporting</p>
+            <p>Passenger Reliability &amp; Experience Reporting</p>
         </div>
 
         <div class="context-pill">
@@ -163,9 +163,7 @@ EMBEDDED_FORM_HTML = """<!DOCTYPE html>
             };
 
             try {
-                // Submit to current origin /feedback or /api/feedback
-                const endpoint = window.location.pathname.startsWith('/api') ? '/api/feedback' : '/feedback';
-                const res = await fetch(endpoint, {
+                const res = await fetch('/feedback', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
@@ -188,11 +186,10 @@ EMBEDDED_FORM_HTML = """<!DOCTYPE html>
         });
     </script>
 </body>
-</html>
-"""
+</html>"""
 
 @router.get("/feedback", response_class=HTMLResponse)
-async def serve_feedback_form(r: str = "784", v: str = "DL1PC9421"):
+def serve_feedback_form(r: str = "784", v: str = "DL1PC9421"):
     if FORM_HTML_PATH.exists():
         html = FORM_HTML_PATH.read_text(encoding="utf-8")
     else:
@@ -200,10 +197,10 @@ async def serve_feedback_form(r: str = "784", v: str = "DL1PC9421"):
     return HTMLResponse(content=html)
 
 @router.post("/feedback", response_model=FeedbackResponse, status_code=status.HTTP_201_CREATED)
-async def submit_feedback(
+def submit_feedback(
     payload: FeedbackCreate,
     request: Request,
-    db: AsyncSession = Depends(get_db)
+    db: Session = Depends(get_db)
 ):
     if not spam_service.check_honeypot(payload.website):
         return FeedbackResponse(
@@ -239,8 +236,8 @@ async def submit_feedback(
     )
 
     db.add(feedback_entry)
-    await db.commit()
-    await db.refresh(feedback_entry)
+    db.commit()
+    db.refresh(feedback_entry)
 
     return FeedbackResponse(
         feedback_id=feedback_entry.feedback_id,

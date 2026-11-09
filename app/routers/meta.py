@@ -5,13 +5,15 @@ from app.services.reference import reference_service
 
 router = APIRouter(tags=["Metadata"])
 
+
 @router.get("/health", response_model=HealthResponse)
-async def health_check():
+def health_check():
     return HealthResponse(
         status="healthy",
         timestamp=datetime.now(timezone.utc)
     )
 
+
 @router.get("/categories", response_model=list[str])
-async def get_categories():
+def get_categories():
     return reference_service.categories
